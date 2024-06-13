@@ -7,7 +7,7 @@
     <div class="col-12 col-lg-8 mb-1">
         <div class="sessionid">{{ .File.ContentBaseName | upper }}</div>
         <div class="h3"><a href="{{ .RelPermalink }}" class="no-underline">{{ .Title }}</a></div>
-        <div class="h5">Room: <a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a> | Time: <a href="/agenda/{{ $hour }}/" class="no-underline">{{ .Params.time }}</a></div>
+        <div class="h5">Room: <a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a> | Time: <a href="{{ .Site.BaseURL }}/agenda/{{ $hour }}/" class="no-underline">{{ .Params.time }}</a></div>
         <div><a href="{{ .RelPermalink }}" class="regular-text">{{ .Summary }}</a></div>
     </div>
     <div class="col-12 col-lg-4 position-relative">

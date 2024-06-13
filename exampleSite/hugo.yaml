@@ -1,4 +1,4 @@
-baseURL: "/"
+baseURL: "https://awsugnl.github.io/hugo-theme-aws-community-day/"
 title: "AWS Community Day"
 markup:
   goldmark:

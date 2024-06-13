@@ -2,7 +2,7 @@
 {{ $active := "" }}
 <nav class="navbar navbar-expand-lg shadow-sm sticky-top navbar-dark" style="background-color: #232f3e;">
     <div class="container">
-      <a class="navbar-brand" href="/">{{ partial "logo" . }}</a>
+      <a class="navbar-brand" href="{{ .Site.BaseURL }}">{{ partial "logo" . }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
