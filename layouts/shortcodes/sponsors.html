@@ -1,0 +1,12 @@
+
+{{- $level := .Get "level" | default "gold" -}}
+
+<div class="row align-items-center justify-content-center">
+    {{ range .Site.Pages }}
+        {{ if in .Params.level $level }}
+        <div class="col-6 col-lg-2 text-center">
+            <a href="{{ .RelPermalink }}"><img src="{{ .RelPermalink }}img/logo.png" style="width: 200px;" /></a>
+        </div>
+        {{ end }}
+    {{ end }}        
+</div>

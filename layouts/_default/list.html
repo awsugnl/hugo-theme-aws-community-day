@@ -1,0 +1,23 @@
+{{ define "main" }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="content">
+                <h1>{{ .Title }}</h1>
+                {{ .Content }}
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <ul>
+                    {{ range sort .Page.Pages "File.Path" }}
+                    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

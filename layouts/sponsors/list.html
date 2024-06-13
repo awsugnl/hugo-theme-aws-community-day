@@ -1,0 +1,57 @@
+{{ define "main" }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            {{ .Content }}
+        </div>
+    </div>
+</div>
+<div class="mt-3">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 text-center sponsor-gold">
+                Gold
+            </div>
+            {{ range .Page.Pages }}
+            {{ if in .Params.level "gold" }}
+            <div class="col-8 col-lg-4 p-3">
+                <a href="{{ .RelPermalink }}">
+                    <img src="{{ .RelPermalink }}/img/logo.png" class="img-fluid" />
+                </a>
+            </div>
+            {{ end }}
+            {{ end }}
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 text-center sponsor-silver">
+                Silver
+            </div>
+            {{ range .Page.Pages }}
+            {{ if in .Params.level "silver" }}
+            <div class="col-6 col-lg-2 p-3">
+                <a href="{{ .RelPermalink }}">
+                    <img src="{{ .RelPermalink }}/img/logo.png" class="img-fluid" />
+                </a>
+            </div>
+            {{ end }}
+            {{ end }}
+        </div>
+        <div class="row align-items-center justify-content-center">
+            <div class="col-12 text-center sponsor-bronze">
+                Bronze
+            </div>
+            {{ range .Page.Pages }}
+            {{ if in .Params.level "bronze" }}
+            <div class="col-4 col-lg-1 p-3">
+                <a href="{{ .RelPermalink }}">
+                    <img src="{{ .RelPermalink }}/img/logo.png" class="img-fluid" />
+                </a>
+            </div>
+            {{ end }}
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+{{ end }}

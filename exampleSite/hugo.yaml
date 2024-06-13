@@ -1,0 +1,8 @@
+baseURL: "/"
+title: "AWS Community Day"
+markup:
+  goldmark:
+    renderer:
+      unsafe: true  # allow inline html in markdown
+
+theme: ../..

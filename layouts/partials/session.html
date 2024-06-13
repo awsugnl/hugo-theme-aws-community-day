@@ -1,0 +1,22 @@
+
+{{ $hour := index (split .Params.time ":") 0 }}
+
+{{ $room := .Site.GetPage (printf "/%s/%s" "rooms" .Params.room ) }}
+
+<div class="row align-items-center justify-content-center mb-2">
+    <div class="col-12 col-lg-8 mb-1">
+        <div class="sessionid">{{ .File.ContentBaseName | upper }}</div>
+        <div class="h3"><a href="{{ .RelPermalink }}" class="no-underline">{{ .Title }}</a></div>
+        <div class="h5">Room: <a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a> | Time: <a href="/agenda/{{ $hour }}/" class="no-underline">{{ .Params.time }}</a></div>
+        <div><a href="{{ .RelPermalink }}" class="regular-text">{{ .Summary }}</a></div>
+    </div>
+    <div class="col-12 col-lg-4 position-relative">
+    {{ with .Param "speakers" }}
+        {{ range $index, $tag :=  . }}
+            {{ with $.Site.GetPage (printf "/%s/%s" "speakers" $tag) -}}
+                {{ partial "speaker" . }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="row align-items-center row-cols-auto">
+    <div class="col">
+        <img src="{{ .RelPermalink }}img/photo.jpg" class="img-fluid rounded-circle" style="width: 200px;" />
+    </div>
+    <div class="col">
+        <h1>{{ .Title }}</h2>
+        <h3>{{ .Params.headline }}</h3>
+        <div class="socials">
+            {{ with .Params.linkedin }}
+                <a href="{{ . }}" target="_blank"><i class="bi bi-linkedin"></i></a>
+            {{ end }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+{{ define "main" }}
+
+{{ $hour := index (split .Params.time ":") 0 }}
+{{ $room := .Site.GetPage (printf "/%s/%s" "rooms" .Params.room ) }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <div class="sessionid">{{ .File.ContentBaseName | upper }}</div>
+                <h1>{{ .Title }}</h2>
+                <div class="h3">Room: <a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a> | Time: <a href="/agenda/{{ $hour }}" class="no-underline">{{ .Params.time }}</a></div>
+                {{ .Content }}
+            </div>
+            <div class="col-12 col-lg-4">
+                {{ with .Param "speakers" }}
+                {{ range $index, $tag := . }}
+                    {{ with $.Site.GetPage (printf "/%s/%s" "speakers" $tag) -}}
+                        {{ partial "speaker" . }}
+                    {{ end }}
+                {{ end }}
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

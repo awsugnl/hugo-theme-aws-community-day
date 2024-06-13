@@ -1,0 +1,25 @@
+{{ define "main" }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row row-cols-auto">
+            {{ range sort .Page.Pages "File.Path" }}
+            <div class="col-12 col-lg-2">
+                <div class="timebox">
+                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                </div>
+            </div>
+            <div class="col-12 col-lg-10">
+                {{ $hour := index (split .Title ":") 0 }}
+                {{ range .Site.Pages}}
+                    {{ if eq $hour (index (split .Params.time ":") 0) }}
+                        {{ partial "session" . }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ end }}

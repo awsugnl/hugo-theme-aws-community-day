@@ -1,0 +1,13 @@
+{{ define "main" }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row gap-2">
+            {{ range sort .Page.Pages "File.Path" }}
+                {{ partial "session" . }}
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+{{ end }}
