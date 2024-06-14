@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row justify-content-center">
             {{ range sort .Page.Pages "File.Path" }}
-            <div class="col-6 col-lg-3">
+            <div class="col-6 col-lg-3 text-center">
                 <a href="{{.Permalink}}">{{ .Title }}</a>
             </div>
             {{ end }}
