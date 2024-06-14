@@ -1,0 +1,15 @@
+{{ define "main" }}
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            {{ range sort .Page.Pages "File.Path" }}
+            <div class="col-6 col-lg-4 mb-3">
+                {{ partial "speaker" . }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+{{ end }}
