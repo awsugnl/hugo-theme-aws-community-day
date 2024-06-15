@@ -138,52 +138,56 @@ a:hover .bi-linkedin {
 }
 
 
-.bg-pink-gradient {
+.acd-bg-pink-gradient {
     background: radial-gradient(80% 130% at 110% -10%, #a600ff, #121b2700), 
                 radial-gradient(80% 130% at -10% 110%, #1ea5f3, #121b2700), 
                 #fb00ff;
 }
-.bg-blue-gradient {
+.acd-bg-blue-gradient {
     background: radial-gradient(80% 130% at 110% -10%, #a600ff, #121b2700), 
                 radial-gradient(80% 130% at -10% 110%, #ef8606, #121b2700), 
                 #1ea5f3;
 }
-.bg-orange-gradient {
+.acd-bg-orange-gradient {
     background: radial-gradient(80% 130% at 110% -10%, #a600ff, #121b2700), 
                 radial-gradient(80% 130% at -10% 110%, #fb00ff, #121b2700), 
                 #ef8606;
 }
-.bg-gradient1 {
+.acd-bg-gradient-1 {
     background: 
         linear-gradient(210deg, #232f3e 0%, #4C38DA 30%, #4C38DA 70%, #CC5E38 100%);
 }
-.bg-gradient2 {
+.acd-bg-gradient-2 {
     background: 
         linear-gradient(210deg, #6134C1 0%, #8B4089 45%, #CC5E38 100%);
 }
-.bg-gradient3 {
+.acd-bg-gradient-3 {
     background: radial-gradient(80% 130% at 110% -10%, #a600ff, #121b2700), 
                 radial-gradient(80% 130% at -10% 110%, #ef8606, #121b2700), 
                 #2d739b;
 }
-
-.spectrum-background {
+.acd-bg-purple-orange-gradient {
     background:
         linear-gradient(#a600ff, transparent),
         linear-gradient(to top left, #fb00ff, transparent),
         linear-gradient(to top right, #ef8606, transparent);
     background-blend-mode: screen;
 }
-.bg-hexagon-default {
+.acd-bg-hexagon-default {
     background: 
         url(../img/theme/hexagon1.png) right top no-repeat, 
         radial-gradient(75% 100% at 75% -10%, #371947, #121b2700); 
     background-size: 30%, 100%
 }
 
+
+
+
 .block {
-    padding: 20px;
+    padding: 20px 20px 60px 20px;
     background-color: #273243;
+    height: 100%;
+    position: relative;
 }
 .block p {
     margin: 0;
@@ -194,12 +198,25 @@ a:hover .bi-linkedin {
     font-size: 1.2em;
 }
 .block .button {
-    display: inline-block;
+    display: block;
     margin-top: 20px;
+    margin-bottom: 20px;
     text-decoration: none;
     border-bottom: 2px solid white;
     color: white;
+    position: absolute;
+    bottom: 0;
 }
 .block .button:hover {
     border-bottom: 2px solid #6ea8fe;
+}
+
+.acd-block-2 {
+    border-radius: 20px;
+    background: #ffffffaa;
+    color: black;
+}
+.acd-block-2 .button {
+    color: black;
+    border-bottom: 2px solid black;
 }
