@@ -19,7 +19,7 @@
                     <h2>Sessions</h2>
                 </div>
                 {{ $sponsor := .File.ContentBaseName }}
-                {{ range .Site.Pages}}
+                {{ range .Site.Pages.ByDate }}
                     {{ if in .Params.sponsors $sponsor }}
                         {{ partial "session" . }}
                     {{ end }}

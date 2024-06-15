@@ -15,12 +15,12 @@
                 <div class="col-12 text-center">
                     <h2>Sessions</h2>
                 </div>
-            {{ $track := .File.ContentBaseName }}
-            {{ range .Site.Pages}}
-                {{ if in .Params.tracks $track }}
-                    {{ partial "session" . }}
+                {{ $track := .File.ContentBaseName }}
+                {{ range .Site.Pages.ByDate }}
+                    {{ if in .Params.tracks $track }}
+                        {{ partial "session" . }}
+                    {{ end }}
                 {{ end }}
-            {{ end }}
             </div>
         </div>
     </div>

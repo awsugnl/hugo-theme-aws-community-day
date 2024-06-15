@@ -9,7 +9,7 @@
         <div class="h3"><a href="{{ .RelPermalink }}" class="no-underline">{{ .Title }}</a></div>
         <div class="h6">
             Room: <a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a> | 
-            Time: <a href="{{ .Site.BaseURL }}/agenda/{{ $hour }}/" class="no-underline">{{ .Params.time }}</a>
+            Time: <a href="{{ .Site.BaseURL }}/agenda/{{ $hour }}/" class="no-underline">{{ .Date.Format "15:04" }}</a>
             {{ with .Param "tracks" }}
             {{ $tracks := . | len }}
             | Track{{ if gt $tracks 1 }}s{{end}}: 

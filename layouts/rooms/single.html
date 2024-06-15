@@ -16,7 +16,7 @@
                     <h2>Sessions</h2>
                 </div>
             {{ $room := .File.ContentBaseName }}
-            {{ range .Site.Pages}}
+            {{ range .Site.Pages.ByDate }}
                 {{ if eq .Params.room $room }}
                     {{ partial "session" . }}
                 {{ end }}

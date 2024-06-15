@@ -21,7 +21,7 @@
                     <h2>Sessions</h2>
                 </div>
             {{ $speaker := .File.ContentBaseName }}
-            {{ range .Site.Pages}}
+            {{ range .Site.Pages.ByDate }}
                 {{ if in .Params.speakers $speaker }}
                     {{ partial "session" . }}
                 {{ end }}

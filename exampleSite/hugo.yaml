@@ -1,5 +1,7 @@
 baseURL: "https://awsugnl.github.io/hugo-theme-aws-community-day/"
 title: "AWS Community Day"
+buildFuture: true # required in case of future events
+
 markup:
   goldmark:
     renderer:
