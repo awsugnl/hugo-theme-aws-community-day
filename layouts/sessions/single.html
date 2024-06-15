@@ -9,7 +9,19 @@
             <div class="col-12 col-lg-8">
                 <div class="sessionid">{{ .File.ContentBaseName | upper }}</div>
                 <h1>{{ .Title }}</h2>
-                <div class="h3">Room: <a href="{{ $room.Permalink }}" class="no-underline">{{ $room.Title }}</a> | Time: <a href="{{ .Site.BaseURL }}agenda/{{ $hour }}" class="no-underline">{{ .Params.time }}</a></div>
+                <div class="h4">
+                    Room: <a href="{{ $room.Permalink }}" class="no-underline">{{ $room.Title }}</a> | 
+                    Time: <a href="{{ .Site.BaseURL }}agenda/{{ $hour }}" class="no-underline">{{ .Params.time }}</a>
+                    {{ with .Param "tracks" }}
+                    {{ $tracks := . | len }}
+                    | Track{{ if gt $tracks 1 }}s{{end}}: 
+                        {{ range $index, $tag :=  . }}{{- if $index }}, {{ end }}
+                            {{ with $.Site.GetPage (printf "/%s/%s" "tracks" $tag) -}}
+                                <a href="{{ .RelPermalink  }}" class="no-underline">{{ .Title }}</a>
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                </div>
                 {{ .Content }}
             </div>
             <div class="col-12 col-lg-4">
