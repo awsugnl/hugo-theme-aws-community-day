@@ -8,3 +8,6 @@ markup:
       unsafe: true  # allow inline html in markdown
 
 theme: ../..
+
+params:
+  timeFormat: "15:04" # If multi day event: "Mon 15:04" if US style: "Mon 3:04PM"
