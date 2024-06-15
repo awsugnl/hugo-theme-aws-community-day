@@ -17,7 +17,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-            {{ range .Site.Pages}}
+            {{ range .Site.Pages.ByDate }}
                 {{ if eq $hour (index (split .Params.agenda ":") 0) }}
                     {{ partial "session" . }}
                 {{ end }}
