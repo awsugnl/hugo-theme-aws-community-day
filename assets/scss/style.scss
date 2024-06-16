@@ -149,9 +149,9 @@ a:hover .bi-linkedin {
                 #1ea5f3;
 }
 .acd-bg-orange-gradient {
-    background: radial-gradient(80% 130% at 110% -10%, #a600ff, #121b2700), 
-                radial-gradient(80% 130% at -10% 110%, #fb00ff, #121b2700), 
-                #ef8606;
+    background: radial-gradient(80% 130% at 110% -10%, #1ea5f3, #121b2700), 
+                radial-gradient(80% 130% at -10% 110%, #a600ff, #121b2700), 
+                #c26d05;
 }
 .acd-bg-gradient-1 {
     background: 
@@ -220,3 +220,24 @@ a:hover .bi-linkedin {
     color: black;
     border-bottom: 2px solid black;
 }
+
+.sidebar {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+.sidebar .sidebar-item {
+    margin: 0 0 5px 0;
+    padding: 3px 0;
+}
+.sidebar .sidebar-link {
+    color: #ffffff88;
+    text-decoration: none;
+}
+.sidebar .active {
+    color: #ffffffcc;
+}
+.sidebar .sidebar-link:hover {
+    color: #fff;
+}
+

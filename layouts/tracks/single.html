@@ -1,28 +1,58 @@
 {{ define "main" }}
 
-<div class="">
-    <div class="mt-3">
-        <div class="container">
-            <div class="row justify-content-center align-items-center">
-                <h1>{{ .Title }}</h1>
-                {{ .Content }}
-            </div>
-        </div>
+{{ $currentPage := .RelPermalink }}
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="ocSectionMenu" aria-labelledby="ocSectionMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="ocSectionMenuLabel">Tracks</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 text-center">
-                    <h2>Sessions</h2>
-                </div>
-                {{ $track := .File.ContentBaseName }}
-                {{ range .Site.Pages.ByDate }}
-                    {{ if in .Params.tracks $track }}
-                        {{ partial "session" . }}
-                    {{ end }}
-                {{ end }}
+    <div class="offcanvas-body">
+        <ul class="sidebar">
+            {{ range sort .Page.Parent.Pages "File.Path"}}
+            <li class="sidebar-item">
+                <a href="{{ .RelPermalink }}" class="sidebar-link {{ if eq $currentPage .RelPermalink }} active{{end}}">{{ .LinkTitle }}</a>
+            </li>
+            {{ end }}
+        </ul>
+    </div>
+</div>
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <a class="btn btn-acd mb-2" data-bs-toggle="offcanvas" href="#ocSectionMenu" role="button" aria-controls="ocSectionMenu">
+                    <i class="bi bi-layout-sidebar"></i> Tracks
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <h1>{{ .Title }}</h1>
+            {{ .Content }}
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2>Sessions</h2>
+            </div>
+            {{ $track := .File.ContentBaseName }}
+            {{ range .Site.Pages.ByDate }}
+                {{ if in .Params.tracks $track }}
+                    {{ partial "session" . }}
+                {{ end }}
+            {{ end }}
+        </div>
+    </div>
+</div>
+
 {{ end }}{{/* end of main */}}
