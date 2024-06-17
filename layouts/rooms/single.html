@@ -39,20 +39,29 @@
     </div>
 </div>
 
+{{ $sessions := slice }}
+{{ $room := .File.ContentBaseName }}
+{{ range .Site.Pages.ByDate }}
+    {{ if eq .Params.room $room }}
+        {{ $sessions = $sessions | append . }}
+    {{ end }}
+{{ end }}
+
+{{ if $sessions }}
 <div class="mt-3">
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
                 <h2>Sessions</h2>
             </div>
-        {{ $room := .File.ContentBaseName }}
-        {{ range .Site.Pages.ByDate }}
-            {{ if eq .Params.room $room }}
-                {{ partial "session" . }}
+            {{ range $sessions }}
+                {{ if eq .Params.room $room }}
+                    {{ partial "session" . }}
+                {{ end }}
             {{ end }}
-        {{ end }}
         </div>
     </div>
 </div>
+{{ end }}
 
 {{ end }}{{/* end of main */}}

@@ -1,0 +1,4 @@
+{{ $rooms := where $.Site.RegularPages "Section" "rooms"}}
+{{ range $rooms }}
+<a href="{{.Permalink}}">{{ .Title }}</a><br/>
+{{ end }}
