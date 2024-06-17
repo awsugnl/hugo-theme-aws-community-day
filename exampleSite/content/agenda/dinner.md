@@ -1,5 +1,5 @@
 ---
-title: "Dinner"
+title: "18:00 - 20:00 Dinner"
 date: 2024-10-03T18:00:00
 ---
 

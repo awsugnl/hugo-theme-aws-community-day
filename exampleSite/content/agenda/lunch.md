@@ -1,5 +1,5 @@
 ---
-title: "Lunch"
+title: "12:00 - 13:00 Lunch"
 date: 2024-10-03T12:00:00
 ---
 

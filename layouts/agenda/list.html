@@ -2,15 +2,14 @@
 
 <div class="mt-3">
     <div class="container">
-        
         {{ range .Page.Pages.ByDate }}
         <div class="row mb-3">
-            <div class="col-12 col-lg-2">
+            <div class="col-12 col-lg-3">
                 <div class="timebox">
                     <a href="{{ .RelPermalink }}">{{ .Title }}</a>
                 </div>
             </div>
-            <div class="col-12 col-lg-10">
+            <div class="col-12 col-lg-9">
                 {{ $hour := index (split .Title ":") 0 }}
                 {{ range .Site.Pages.ByDate }}
                     {{ if eq $hour (index (split .Params.agenda ":") 0) }}
