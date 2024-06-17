@@ -75,13 +75,16 @@
 }
 
 .timebox a {
-    background: linear-gradient(to bottom right, #6521C8, #D65330);
-    display: inline-block;
+    background: #4d6583;
+    display: block;
     padding: 5px 10px;
     text-decoration: none;
     color: white;
     margin-bottom: 1rem;
     border-radius: 2px;
+}
+.timebox a:hover {
+    background: #3b4e64;
 }
 
 .sessionid {
