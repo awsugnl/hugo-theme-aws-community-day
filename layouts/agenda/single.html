@@ -11,7 +11,7 @@
     </div>
     <div class="offcanvas-body">
         <ul class="sidebar">
-            {{ range sort .Page.Parent.Pages "File.Path"}}
+            {{ range .Page.Parent.Pages.ByDate }}
             <li class="sidebar-item">
                 <a href="{{ .RelPermalink }}" class="sidebar-link {{ if eq $currentPage .RelPermalink }} active{{end}}">{{ .LinkTitle }}</a>
             </li>
@@ -34,8 +34,8 @@
 
 <div class="mt-3">
     <div class="container">
-        <div class="row">
-            <div class="col-12 col-lg-6">
+        <div class="row ">
+            <div class="col-12">
                 <h1>{{ .Title }}</h2>
                 {{ .Content }}
             </div>
