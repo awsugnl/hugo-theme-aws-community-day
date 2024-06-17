@@ -2,10 +2,20 @@
 
 <div class="mt-3">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row row-gap-4">
             {{ range sort .Page.Pages "File.Path" }}
-            <div class="col-6 col-lg-3 text-center">
-                <a href="{{.Permalink}}">{{ .Title }}</a>
+            <div class="col-6 col-lg-4 text-center position-relative acd-icon">
+                {{ $icon := .Params.icon | default "balloon-fill" }}
+                <i class="bi bi-{{ $icon }}"></i><br/>
+                <a href="{{.Permalink}}" class="text-light stretched-link">{{ .Title }}</a>
+                {{ $track := .File.ContentBaseName }}
+                {{ $sessions := slice }}
+                {{ range .Site.Pages.ByDate }}
+                    {{ if in .Params.tracks $track }}
+                        {{ $sessions = $sessions | append . }}
+                    {{ end }}
+                {{ end }}
+                <sup><span class="badge rounded-pill text-bg-danger">{{ len $sessions | default 0 }} </span></sup>
             </div>
             {{ end }}
         </div>

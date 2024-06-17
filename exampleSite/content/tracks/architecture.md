@@ -1,4 +1,5 @@
 ---
 title: "Architecture"
+icon: "compass"
 ---
 
