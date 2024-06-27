@@ -15,7 +15,7 @@
                         {{ $sessions = $sessions | append . }}
                     {{ end }}
                 {{ end }}
-                <sup><span class="badge rounded-pill text-bg-danger">{{ len $sessions | default 0 }} </span></sup>
+                <span class="badge rounded-pill" style="background: #404e5f">{{ len $sessions | default 0 }} </span>
             </div>
             {{ end }}
         </div>
