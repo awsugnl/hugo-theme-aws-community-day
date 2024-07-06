@@ -56,12 +56,33 @@
     --bs-form-invalid-border-color: #ea868f;
 }
 
-.btn-acd{
+.btn-acd, .btn-acd2 {
+    text-decoration: none;
+    color: white;
+}
+.btn-acd-lg {
+    font-size: 1.2em;
+}
+
+.btn-acd {
     border: 0;
     background: linear-gradient(191deg, #5C1CD7 0%, #6521C8 25%, #A13B78 70%, #D65330 90%, #E9900E 100%);
+    border-radius: 50px;
+    padding: 12px 28px;
 }
 .btn-acd:hover {
+    background: linear-gradient(191deg, #36107b 0%, #360a79 25%, #83265d 70%, #8c361e 90%, #9b620c 100%);
+}
+
+.btn-acd2 {
+    border: 2px solid #E9900E;
+    background: transparent;
+    border-radius: 50px;
+    padding: 10px 24px;
+}
+.btn-acd2:hover {
     background: #E9900E;
+    border: 2px solid #E9900E;
 }
 
 .bg-hexagon-rt {
