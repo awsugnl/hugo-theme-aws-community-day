@@ -1,6 +1,6 @@
 {{ define "main" }}
 
-{{ $hour := index (split .Title ":") 0 }}
+{{ $hour := .File.ContentBaseName }}
 
 {{ $currentPage := .RelPermalink }}
 
@@ -48,7 +48,7 @@
         <div class="row">
             <div class="col-12">
             {{ range .Site.Pages.ByDate }}
-                {{ if eq $hour (index (split .Params.agenda ":") 0) }}
+                {{ if eq $hour .Params.agenda }}
                     {{ partial "session" . }}
                 {{ end }}
             {{ end }}
