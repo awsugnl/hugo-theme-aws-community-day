@@ -1,11 +1,23 @@
 
 {{- $level := .Get "level" | default "gold" -}}
 
-<div class="row align-items-center justify-content-center">
+<div class="row align-items-center justify-content-center row-cols-2 row-cols-lg-5">
     {{ range .Site.Pages }}
         {{ if in .Params.level $level }}
-        <div class="col-6 col-lg-2 text-center">
-            <a href="{{ .RelPermalink }}"><img src="{{ .RelPermalink }}img/logo.png" style="width: 200px;" /></a>
+            {{- $img := "" }}
+            {{- if fileExists (printf "%s/%s" .Path "img/logo.svg") }}
+                {{- $img = "img/logo.svg" }}
+            {{- else if fileExists (printf "%s/%s" .Path "img/logo.png") }}
+                {{- $img = "img/logo.png" }}
+            {{- else if fileExists (printf "%s/%s" .Path "img/logo.jpg") }}
+                {{- $img = "img/logo.jpg" }}
+            {{- else }}
+                {{- $img = "/img/sponsor.png" }}
+            {{- end }}
+        <div class="col p-3">
+            <a href="{{ .RelPermalink }}">
+                <img src="{{ .RelPermalink }}{{ $img }}" class="mx-auto d-block" style="max-height: 100px; max-width: 150px;" />
+            </a>
         </div>
         {{ end }}
     {{ end }}        
