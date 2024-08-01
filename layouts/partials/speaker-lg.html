@@ -1,6 +1,14 @@
 <div class="row align-items-center row-cols-auto">
     <div class="col-4">
-        <img src="{{ .RelPermalink }}img/photo.jpg" class="img-fluid rounded-circle" />
+        {{- $img := "" }}
+        {{- if fileExists (printf "%s/%s" .Path "img/photo.png") }}
+            {{- $img = (printf "%s%s" .RelPermalink "img/photo.png") }}
+        {{- else if fileExists (printf "%s/%s" .Path "img/photo.jpg") }}
+            {{- $img = (printf "%s%s" .RelPermalink "img/photo.jpg") }}
+        {{- else }}
+            {{- $img = (printf "%s%s" .Site.BaseURL "img/person.png") }}
+        {{- end }}
+        <img src="{{ $img }}" class="img-fluid rounded-circle" />
     </div>
     <div class="col-8">
         <h1>{{ .Title }}</h2>

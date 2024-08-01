@@ -19,17 +19,17 @@
             {{ if in .Params.level "gold" }}
                 {{- $img := "" }}
                 {{- if fileExists (printf "%s/%s" .Path "img/logo.svg") }}
-                    {{- $img = "img/logo.svg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.svg") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.png") }}
-                    {{- $img = "img/logo.png" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.png") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.jpg") }}
-                    {{- $img = "img/logo.jpg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.jpg") }}
                 {{- else }}
-                    {{- $img = "/img/sponsor.png" }}
+                    {{- $img = (printf "%s%s" .Site.BaseURL "img/company.png") }}
                 {{- end }}
             <div class="col p-3">
                 <a href="{{ .RelPermalink }}">
-                    <img src="{{ .RelPermalink }}{{ $img }}" class="mx-auto d-block" style="max-height: 150px; max-width: 200px" />
+                    <img src="{{ $img }}" class="mx-auto d-block" style="max-height: 150px; max-width: 200px" />
                 </a>
             </div>
             {{ end }}
@@ -45,17 +45,17 @@
             {{ if in .Params.level "silver" }}
                 {{- $img := "" }}
                 {{- if fileExists (printf "%s/%s" .Path "img/logo.svg") }}
-                    {{- $img = "img/logo.svg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.svg") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.png") }}
-                    {{- $img = "img/logo.png" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.png") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.jpg") }}
-                    {{- $img = "img/logo.jpg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.jpg") }}
                 {{- else }}
-                    {{- $img = "/img/sponsor.png" }}
+                    {{- $img = (printf "%s%s" .Site.BaseURL "img/company.png") }}
                 {{- end }}
             <div class="col p-3">
                 <a href="{{ .RelPermalink }}">
-                    <img src="{{ .RelPermalink }}{{ $img }}" class="mx-auto d-block" style="max-height: 70px; max-width: 150px" />
+                    <img src="{{ $img }}" class="mx-auto d-block" style="max-height: 70px; max-width: 150px" />
                 </a>
             </div>
             {{ end }}
@@ -71,17 +71,17 @@
             {{ if in .Params.level "bronze" }}
                 {{- $img := "" }}
                 {{- if fileExists (printf "%s/%s" .Path "img/logo.svg") }}
-                    {{- $img = "img/logo.svg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.svg") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.png") }}
-                    {{- $img = "img/logo.png" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.png") }}
                 {{- else if fileExists (printf "%s/%s" .Path "img/logo.jpg") }}
-                    {{- $img = "img/logo.jpg" }}
+                    {{- $img = (printf "%s%s" .RelPermalink "img/logo.jpg") }}
                 {{- else }}
-                    {{- $img = "/img/sponsor.png" }}
+                    {{- $img = (printf "%s%s" .Site.BaseURL "img/company.png") }}
                 {{- end }}
             <div class="col p-3">
                 <a href="{{ .RelPermalink }}">
-                    <img src="{{ .RelPermalink }}{{ $img }}" class="mx-auto d-block" style="max-height: 60px; max-width: 130px" />
+                    <img src="{{ $img }}" class="mx-auto d-block" style="max-height: 60px; max-width: 130px" />
                 </a>
             </div>
             {{ end }}

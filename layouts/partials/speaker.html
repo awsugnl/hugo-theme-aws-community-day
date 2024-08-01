@@ -1,7 +1,15 @@
 <div class="row align-items-center row-cols-auto position-relative mb-2">
     <div class="col-4">
+        {{- $img := "" }}
+        {{- if fileExists (printf "%s/%s" .Path "img/photo.png") }}
+            {{- $img = (printf "%s%s" .RelPermalink "img/photo.png") }}
+        {{- else if fileExists (printf "%s/%s" .Path "img/photo.jpg") }}
+            {{- $img = (printf "%s%s" .RelPermalink "img/photo.jpg") }}
+        {{- else }}
+            {{- $img = (printf "%s%s" .Site.BaseURL "img/person.png") }}
+        {{- end }}
         <a href="{{ .RelPermalink }}" class="stretched-link">
-            <img src="{{ .RelPermalink }}img/photo.jpg" class="img-fluid rounded-circle" />
+            <img src="{{ $img }}" class="img-fluid rounded-circle" />
         </a>
     </div>
     <div class="col-8">
