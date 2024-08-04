@@ -57,8 +57,10 @@
 }
 
 .btn-acd, .btn-acd2 {
+    display: inline-block;
     text-decoration: none;
     color: white;
+    margin-bottom: 10px;
 }
 .btn-acd-lg {
     font-size: 1.2em;
