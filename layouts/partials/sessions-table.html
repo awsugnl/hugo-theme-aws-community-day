@@ -1,0 +1,44 @@
+<div class="sessions-table-container mb-5">
+    <h2 class="mb-3">Sessions Overview</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Room</th>
+                    <th>Time</th>
+                    <th>Duration</th>
+                    <th>Speaker(s)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ $timeFormat := .Site.Params.timeFormat | default "15:04" }}
+                {{ $sessions := where .Site.RegularPages "Section" "sessions" }}
+                {{ $sessionsByID := sort $sessions "File.ContentBaseName" }}
+                {{ $sortedSessions := sort $sessionsByID "Date" }}
+                
+                {{ range $sortedSessions }}
+                    {{ $room := .Site.GetPage (printf "/%s/%s" "rooms" .Params.room ) }}
+                    <tr>
+                        <td><span class="badge bg-secondary">{{ .File.ContentBaseName | upper }}</span></td>
+                        <td><a href="{{ .RelPermalink }}" class="no-underline">{{ .Title }}</a></td>
+                        <td>{{ if $room }}<a href="{{ $room.RelPermalink }}" class="no-underline">{{ $room.Title }}</a>{{ end }}</td>
+                        <td>{{ if .Date }}{{ .Date.Format $timeFormat }}{{ end }}</td>
+                        <td>{{ .Params.Duration }} min</td>
+                        <td>
+                            {{ with .Param "speakers" }}
+                                {{ range $index, $tag := . }}
+                                    {{ with $.Site.GetPage (printf "/%s/%s" "speakers" $tag) -}}
+                                        {{- if $index }}, {{ end -}}
+                                        <a href="{{ .RelPermalink }}" class="no-underline">{{ .Title }}</a>
+                                    {{ end }}
+                                {{ end }}
+                            {{ end }}
+                        </td>
+                    </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>

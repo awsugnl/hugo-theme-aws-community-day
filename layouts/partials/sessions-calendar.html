@@ -1,0 +1,247 @@
+<div class="sessions-calendar-container mb-5">
+    <h2 class="mb-3">Calendar View</h2>
+    
+    {{ $timeFormat := .Site.Params.timeFormat | default "15:04" }}
+    {{ $sessions := where .Site.RegularPages "Section" "sessions" }}
+    
+    <!-- Get rooms from content/rooms directory, excluding _index.md -->
+    {{ $rooms := where .Site.RegularPages "Section" "rooms" }}
+    {{ $sortedRooms := sort $rooms "Title" }}
+    
+    <!-- Define time slots for the day -->
+    {{ $timeSlots := slice "08:00" "08:30" "09:00" "09:30" "10:00" "10:30" "11:00" "11:30" "12:00" "12:30" "13:00" "13:30" "14:00" "14:30" "15:00" "15:30" "16:00" "16:30" "17:00" "17:30" }}
+    
+    <!-- Get all breaks from agenda section -->
+    {{ $breaks := where .Site.Pages "Section" "agenda" }}
+    
+    <div class="table-responsive">
+        <table class="table table-bordered calendar-table">
+            <thead>
+                <tr class="bg-dark text-white">
+                    <th style="width: 100px;">Time</th>
+                    <th>Agenda</th>
+                    {{ range $sortedRooms }}
+                        <th>{{ .Title }}</th>
+                    {{ end }}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Create a map to track cells covered by rowspans -->
+                {{ if eq $timeSlots 0 }}
+                    {{ $.Scratch.Set "rowspanMap" dict }}
+                {{ end }}
+                
+                {{ range $timeIndex, $currentTime := $timeSlots }}
+                    <tr>
+                        <td class="time-cell">{{ $currentTime }}</td>
+                        
+                        <!-- Check if this agenda cell is covered by a rowspan from a previous row -->
+                        {{ $agendaRowspanKey := printf "%d-agenda" $timeIndex }}
+                        {{ $agendaIsCovered := $.Scratch.Get $agendaRowspanKey }}
+                        
+                        {{ if not $agendaIsCovered }}
+                            <!-- Agenda cell -->
+                            {{ $hasAgendaItem := false }}
+                            {{ $currentAgendaItem := dict }}
+                            {{ $agendaRowspan := 1 }}
+                            
+                            <!-- Check for agenda items at this time -->
+                            {{ range $breaks }}
+                                {{ if ne .File.ContentBaseName "_index" }}
+                                    {{ $breakName := .File.ContentBaseName }}
+                                    {{ if eq (len $breakName) 4 }} <!-- Ensure it's a 4-digit time code -->
+                                        {{ $breakHour := substr $breakName 0 2 }}
+                                        {{ $breakMinute := substr $breakName 2 2 }}
+                                        {{ $breakTimeStr := printf "%s:%s" $breakHour $breakMinute }}
+                                        
+                                        {{ if eq $breakTimeStr $currentTime }}
+                                            {{ $hasAgendaItem = true }}
+                                            {{ $currentAgendaItem = . }}
+                                            
+                            <!-- Calculate rowspan based on duration -->
+                            {{ with $currentAgendaItem.Params.duration }}
+                                {{ $agendaDuration := int . }}
+                                {{ $agendaRowspan = div $agendaDuration 30 }}
+                                {{ if eq $agendaRowspan 0 }}{{ $agendaRowspan = 1 }}{{ end }}
+                                
+                                <!-- Mark cells that will be covered by this rowspan -->
+                                {{ if gt $agendaRowspan 1 }}
+                                    {{ range $i := seq 1 (sub $agendaRowspan 1) }}
+                                        {{ $nextRowIndex := add $timeIndex $i }}
+                                        {{ if lt $nextRowIndex (len $timeSlots) }}
+                                            {{ $nextKey := printf "%d-agenda" $nextRowIndex }}
+                                            {{ $.Scratch.Set $nextKey true }}
+                                            
+                                            <!-- If this is an allrooms item, also mark to skip room cells for this row -->
+                                            {{ if $currentAgendaItem.Params.allrooms }}
+                                                {{ $skipRoomsKey := printf "skip-rooms-%d" $nextRowIndex }}
+                                                {{ $.Scratch.Set $skipRoomsKey true }}
+                                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            {{ end }}
+                            
+                            <!-- Render the agenda cell -->
+                            {{ if $hasAgendaItem }}
+                                {{ $allRooms := $currentAgendaItem.Params.allrooms | default false }}
+                                {{ if $allRooms }}
+                                    <!-- If allrooms is true, span across all room columns -->
+                                    <td rowspan="{{ $agendaRowspan }}" colspan="{{ add (len $sortedRooms) 1 }}" class="break-cell">
+                                        {{ $currentAgendaItem.Title }}
+                                    </td>
+                                {{ else }}
+                                    <td rowspan="{{ $agendaRowspan }}" class="break-cell">
+                                        {{ $currentAgendaItem.Title }}
+                                    </td>
+                                {{ end }}
+                            {{ else }}
+                                <td></td>
+                            {{ end }}
+                        {{ end }}
+                        
+                        <!-- Check if we should render room cells (skip if agenda item has allrooms=true) -->
+                        {{ $skipRoomCells := false }}
+                        
+                        <!-- Check if this row is covered by a rowspan from an allrooms item -->
+                        {{ $skipRoomsKey := printf "skip-rooms-%d" $timeIndex }}
+                        {{ $skipFromRowspan := $.Scratch.Get $skipRoomsKey }}
+                        {{ if $skipFromRowspan }}
+                            {{ $skipRoomCells = true }}
+                        {{ else if not $agendaIsCovered }}
+                            {{ $foundAgendaItem := false }}
+                            {{ range $breaks }}
+                                {{ if ne .File.ContentBaseName "_index" }}
+                                    {{ $breakName := .File.ContentBaseName }}
+                                    {{ if eq (len $breakName) 4 }}
+                                        {{ $breakHour := substr $breakName 0 2 }}
+                                        {{ $breakMinute := substr $breakName 2 2 }}
+                                        {{ $breakTimeStr := printf "%s:%s" $breakHour $breakMinute }}
+                                        
+                                        {{ if eq $breakTimeStr $currentTime }}
+                                            {{ $foundAgendaItem = true }}
+                                            {{ if .Params.allrooms }}
+                                                {{ $skipRoomCells = true }}
+                                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                            {{ end }}
+                        {{ end }}
+                        
+                        <!-- Room cells -->
+                        {{ if not $skipRoomCells }}
+                            {{ range $roomIndex, $room := $sortedRooms }}
+                                {{ $roomID := $room.File.ContentBaseName }}
+                                
+                                <!-- Check if this cell is covered by a rowspan from a previous row -->
+                                {{ $rowspanKey := printf "%d-%d" $timeIndex $roomIndex }}
+                                {{ $isCovered := $.Scratch.Get $rowspanKey }}
+                            
+                            {{ if not $isCovered }}
+                                {{ $hasSession := false }}
+                                {{ $currentSession := dict }}
+                                {{ $rowspan := 1 }}
+                                
+                                <!-- Check for sessions in this room at this time -->
+                                {{ range $sessions }}
+                                    {{ if eq .Params.room $roomID }}
+                                        {{ $sessionTime := .Date.Format $timeFormat }}
+                                        {{ if eq $sessionTime $currentTime }}
+                                            {{ $hasSession = true }}
+                                            {{ $currentSession = . }}
+                                            {{ $sessionDuration := int .Params.duration }}
+                                            {{ $rowspan = div $sessionDuration 30 }}
+                                            {{ if eq $rowspan 0 }}{{ $rowspan = 1 }}{{ end }}
+                                            
+                                            <!-- Mark cells that will be covered by this rowspan -->
+                                            {{ if gt $rowspan 1 }}
+                                                {{ range $i := seq 1 (sub $rowspan 1) }}
+                                                    {{ $nextRowIndex := add $timeIndex $i }}
+                                                    {{ if lt $nextRowIndex (len $timeSlots) }}
+                                                        {{ $nextKey := printf "%d-%d" $nextRowIndex $roomIndex }}
+                                                        {{ $.Scratch.Set $nextKey true }}
+                                                    {{ end }}
+                                                {{ end }}
+                                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                {{ end }}
+                                
+                                <!-- Render the cell based on what's happening at this time -->
+                                {{ if $hasSession }}
+                                    <td rowspan="{{ $rowspan }}">
+                                        <div class="session-title">
+                                            <a href="{{ $currentSession.RelPermalink }}" class="no-underline">
+                                                <strong>{{ $currentSession.File.ContentBaseName | upper }}</strong>: {{ $currentSession.Title }}
+                                            </a>
+                                        </div>
+                                        <div class="session-details">
+                                       
+                                            {{ with $currentSession.Param "speakers" }}
+                                                {{ range $index, $tag := . }}
+                                                    {{ with $.Site.GetPage (printf "/%s/%s" "speakers" $tag) -}}
+                                                        {{- if $index }}, {{ end -}}
+                                                        <a href="{{ .RelPermalink }}" >{{ .Title }}</a>
+                                                    {{ end }}
+                                                {{ end }}
+                                            {{ end }}
+                                        </div>
+                                    </td>
+                                {{ else }}
+                                    <td></td>
+                                {{ end }}
+                            {{ end }}
+                        {{ end }}
+                        {{ end }}
+                    </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.calendar-table {
+    table-layout: fixed;
+    width: 100%;
+}
+.time-cell {
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #f8f9fa;
+    width: 80px;
+}
+.session-cell {
+    vertical-align: top;
+    padding: 5px;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.2s;
+}
+.session-cell:hover {
+    background-color: #e6f2ff !important;
+}
+.break-cell {
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    background-color: #e9ecef;
+}
+.session-title {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.session-details {
+    font-size: 0.8rem;
+    color: #495057;
+}
+.calendar-table th {
+    text-align: center;
+}
+</style>
