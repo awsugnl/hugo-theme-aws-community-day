@@ -205,7 +205,9 @@
     </div>
 </div>
 
+
 <style>
+/* Calendar table styles */
 .calendar-table {
     table-layout: fixed;
     width: 100%;
@@ -214,7 +216,7 @@
     font-weight: bold;
     vertical-align: middle;
     text-align: center;
-    background-color: #f8f9fa;
+    /* background-color: #f8f9fa; */
     width: 80px;
 }
 .session-cell {
@@ -230,7 +232,7 @@
     vertical-align: middle;
     text-align: center;
     font-weight: bold;
-    background-color: #e9ecef;
+    /* background-color: #e9ecef; */
 }
 .session-title {
     font-size: 0.9rem;
@@ -243,5 +245,12 @@
 }
 .calendar-table th {
     text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sessions-calendar-container {
+        display: none;
+    }
 }
 </style>

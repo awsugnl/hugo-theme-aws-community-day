@@ -4,6 +4,35 @@
     <div class="container">
         {{ partial "sessions-calendar" . }}
         {{ partial "sessions-table" . }}
+    </div>
 </div>
+
+<style>
+/* Additional responsive styles for agenda page */
+@media (max-width: 768px) {
+    /* Increase spacing between sections on mobile */
+    .sessions-calendar-container,
+    .sessions-table-container {
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Make headings smaller on mobile */
+    .sessions-calendar-container h2,
+    .sessions-table-container h2 {
+        font-size: 1.5rem;
+    }
+    
+    /* Make links more tappable */
+    .sessions-table-container a {
+        padding: 2px 0;
+        display: inline-block;
+    }
+    
+    /* Improve card appearance */
+    .card-body {
+        padding: 0.75rem;
+    }
+}
+</style>
 
 {{ end }}

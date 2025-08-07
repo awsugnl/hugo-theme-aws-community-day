@@ -41,4 +41,206 @@
             </tbody>
         </table>
     </div>
+
+<!-- Mobile Timeline View -->
+<div class="sessions-timeline mb-4 d-md-none">
+    {{ $timeFormat := .Site.Params.timeFormat | default "15:04" }}
+    {{ $sessions := where .Site.RegularPages "Section" "sessions" }}
+    {{ $breaks := where .Site.Pages "Section" "agenda" }}
+    {{ $mobileTimeSlots := slice "08:00" "08:30" "09:00" "09:30" "10:00" "10:30" "11:00" "11:30" "12:00" "12:30" "13:00" "13:30" "14:00" "14:30" "15:00" "15:30" "16:00" "16:30" "17:00" "17:30" }}
+    
+    {{ range $timeIndex, $currentTime := $mobileTimeSlots }}
+        <div class="timeline-slot mb-4">
+            <div class="timeline-time">{{ $currentTime }}</div>
+            
+            <!-- Check for agenda items at this time -->
+            {{ $hasAgendaItem := false }}
+            {{ $currentAgendaItem := dict }}
+            {{ $isOngoingAgendaItem := false }}
+            
+            <!-- Parse current timeline slot time for agenda comparison -->
+            {{ $currentTimeParts := split $currentTime ":" }}
+            {{ $currentHour := index $currentTimeParts 0 }}
+            {{ $currentMinute := index $currentTimeParts 1 }}
+            {{ $currentHourInt := 0 }}
+            {{ if eq (substr $currentHour 0 1) "0" }}
+                {{ $currentHourInt = int (substr $currentHour 1 1) }}
+            {{ else }}
+                {{ $currentHourInt = int $currentHour }}
+            {{ end }}
+            {{ $currentMinuteInt := 0 }}
+            {{ if eq (substr $currentMinute 0 1) "0" }}
+                {{ $currentMinuteInt = int (substr $currentMinute 1 1) }}
+            {{ else }}
+                {{ $currentMinuteInt = int $currentMinute }}
+            {{ end }}
+            {{ $currentTotalMinutes := add (mul $currentHourInt 60) $currentMinuteInt }}
+            
+            {{ range $breaks }}
+                {{ if ne .File.ContentBaseName "_index" }}
+                    {{ $breakName := .File.ContentBaseName }}
+                    {{ if eq (len $breakName) 4 }} <!-- Ensure it's a 4-digit time code -->
+                        {{ $breakHour := substr $breakName 0 2 }}
+                        {{ $breakMinute := substr $breakName 2 2 }}
+                        {{ $breakTimeStr := printf "%s:%s" $breakHour $breakMinute }}
+                        
+                        <!-- Calculate break start and end times -->
+                        {{ $breakHourInt := 0 }}
+                        {{ if eq (substr $breakHour 0 1) "0" }}
+                            {{ $breakHourInt = int (substr $breakHour 1 1) }}
+                        {{ else }}
+                            {{ $breakHourInt = int $breakHour }}
+                        {{ end }}
+                        {{ $breakMinuteInt := 0 }}
+                        {{ if eq (substr $breakMinute 0 1) "0" }}
+                            {{ $breakMinuteInt = int (substr $breakMinute 1 1) }}
+                        {{ else }}
+                            {{ $breakMinuteInt = int $breakMinute }}
+                        {{ end }}
+                        {{ $breakStartMinutes := add (mul $breakHourInt 60) $breakMinuteInt }}
+                        {{ $breakDuration := 30 }} <!-- Default to 30 minutes if not specified -->
+                        {{ with .Params.duration }}
+                            {{ $breakDuration = int . }}
+                        {{ end }}
+                        {{ $breakEndMinutes := add $breakStartMinutes $breakDuration }}
+                        
+                        <!-- Check if this is the start of the break or if it's ongoing -->
+                        {{ if eq $breakTimeStr $currentTime }}
+                            {{ $hasAgendaItem = true }}
+                            {{ $currentAgendaItem = . }}
+                            {{ $isOngoingAgendaItem = false }} <!-- Reset to false for items that start at this time -->
+                        {{ else if and (gt $currentTotalMinutes $breakStartMinutes) (le $currentTotalMinutes $breakEndMinutes) }}
+                            <!-- Only mark as ongoing if we don't already have an agenda item starting at this time -->
+                            {{ if not $hasAgendaItem }}
+                                {{ $hasAgendaItem = true }}
+                                {{ $currentAgendaItem = . }}
+                                {{ $isOngoingAgendaItem = true }}
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+            
+            <!-- Render agenda item if exists -->
+            {{ if $hasAgendaItem }}
+                <div class="timeline-agenda">
+                    <div class="card mb-2">
+                        <div class="card-body py-2 break-card">
+                            <h5 class="card-title mb-0">
+                                {{ $currentAgendaItem.Title }}
+                                {{ if $isOngoingAgendaItem }}
+                                    <span class="text-muted">(Ongoing)</span>
+                                {{ end }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            {{ end }}
+            
+            <!-- Sessions at this time -->
+            <div class="timeline-sessions">
+                {{ range $sessions }}
+                    {{ $sessionTime := .Date.Format $timeFormat }}
+                    {{ $sessionDuration := int .Params.Duration }}
+                    
+                    <!-- Parse session start time -->
+                    {{ $sessionHour := .Date.Hour }}
+                    {{ $sessionMinute := .Date.Minute }}
+                    {{ $sessionStartMinutes := add (mul $sessionHour 60) $sessionMinute }}
+                    {{ $sessionEndMinutes := add $sessionStartMinutes $sessionDuration }}
+                    
+                    <!-- Parse current timeline slot time -->
+                    {{ $currentTimeParts := split $currentTime ":" }}
+                    {{ $currentHour := index $currentTimeParts 0 }}
+                    {{ $currentMinute := index $currentTimeParts 1 }}
+                    {{ $currentHourInt := 0 }}
+                    {{ if eq (substr $currentHour 0 1) "0" }}
+                        {{ $currentHourInt = int (substr $currentHour 1 1) }}
+                    {{ else }}
+                        {{ $currentHourInt = int $currentHour }}
+                    {{ end }}
+                    {{ $currentMinuteInt := 0 }}
+                    {{ if eq (substr $currentMinute 0 1) "0" }}
+                        {{ $currentMinuteInt = int (substr $currentMinute 1 1) }}
+                    {{ else }}
+                        {{ $currentMinuteInt = int $currentMinute }}
+                    {{ end }}
+                    {{ $currentTotalMinutes := add (mul $currentHourInt 60) $currentMinuteInt }}
+                    
+                    <!-- Check if session is active at this time slot -->
+                    {{ if and (ge $currentTotalMinutes $sessionStartMinutes) (lt $currentTotalMinutes $sessionEndMinutes) }}
+                        {{ $room := .Site.GetPage (printf "/%s/%s" "rooms" .Params.room ) }}
+                        <div class="card mb-2">
+                            <div class="card-body py-2">
+                                <h5 class="card-title mb-1">
+                                    <a href="{{ .RelPermalink }}" class="no-underline">
+                                        <strong>{{ .File.ContentBaseName | upper }}</strong>: {{ .Title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text mb-1">
+                                    <small>
+                                        <strong>Room:</strong> {{ if $room }}{{ $room.Title }}{{ end }} | 
+                                        <strong>Duration:</strong> {{ .Params.Duration }} min
+                                        {{ $currentTimeFormatted := $currentTime }}
+                                        {{ if and (ne $sessionTime $currentTimeFormatted) (ne $currentTotalMinutes $sessionStartMinutes) }}
+                                            <span class="text-muted">(Started at {{ $sessionTime }})</span>
+                                        {{ end }}
+                                    </small>
+                                </p>
+                                <p class="card-text mb-0">
+                                    <small class="text-muted">
+                                        {{ with .Param "speakers" }}
+                                            {{ range $index, $tag := . }}
+                                                {{ with $.Site.GetPage (printf "/%s/%s" "speakers" $tag) -}}
+                                                    {{- if $index }}, {{ end -}}
+                                                    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                                                {{ end }}
+                                            {{ end }}
+                                        {{ end }}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </div>
+    {{ end }}
+</div>
+
+<style>
+/* Responsive adjustments for sessions table */
+@media (max-width: 768px) {
+    /* Hide table on mobile */
+    .sessions-table-container .table-responsive {
+        display: none;
+
+    .sessions-timeline {
+        display: none !important;
+    }
+    }
+
+
+    /* Mobile timeline styles */
+    .timeline-slot {
+        border-left: 3px solid #6c757d;
+        padding-left: 30px;
+        position: relative;
+    }
+    .timeline-time {
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 4px;
+        margin-left: -25px;
+    }
+    .timeline-sessions .card {
+        border-left: 4px solid #6521C8;
+    }
+    .break-card {
+    }
+}
+</style>
 </div>
