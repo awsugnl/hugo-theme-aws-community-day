@@ -1,107 +1,21 @@
 <div class="sessions-calendar-container mb-5">
     <h2 class="mb-3">Calendar View</h2>
 
-    {{ $sessions := where .Site.RegularPages "Section" "sessions" }}
+    {{/* Shared with the mobile timeline in sessions-table.html */}}
+    {{ $schedule := partial "schedule-data" . }}
+    {{ $agendaItems := $schedule.agendaItems }}
+    {{ $sessionItems := $schedule.sessionItems }}
+    {{ $bounds := $schedule.bounds }}
 
     <!-- Get rooms from content/rooms directory, excluding _index.md -->
     {{ $rooms := where .Site.RegularPages "Section" "rooms" }}
     {{ $sortedRooms := sort $rooms "File.ContentBaseName" "asc" }}
 
-    <!-- Get all breaks from agenda section -->
-    {{ $breaks := where .Site.Pages "Section" "agenda" }}
-
-    {{/*
-        The grid rows are derived from the event itself rather than a fixed
-        ruler. Every agenda entry and session contributes its start and its end
-        as a "boundary"; the sorted, de-duplicated boundaries become the rows.
-
-        This means the table automatically spans the real day - no empty morning
-        rows, no sessions falling off the end - and copes with any mix of
-        durations (20, 30, 60, 75 minutes) because a row is a real moment in the
-        schedule, not a fixed-size tick. All times are minutes past midnight.
-    */}}
-
-    {{ $agendaItems := slice }}
-    {{ range $breaks }}
-        {{ if .File }}
-            {{ $name := .File.ContentBaseName }}
-            {{ if and (ne $name "_index") (eq (len $name) 4) }}
-                {{/* Trim leading zeros first: Go casts "09" as octal and errors out */}}
-                {{ $hh := int (or (strings.TrimLeft "0" (substr $name 0 2)) "0") }}
-                {{ $mm := int (or (strings.TrimLeft "0" (substr $name 2 2)) "0") }}
-                {{ $start := add (mul $hh 60) $mm }}
-                {{ $dur := int (.Params.duration | default 0) }}
-                {{ $agendaItems = $agendaItems | append (dict
-                    "start" $start "end" (add $start $dur) "page" .) }}
-            {{ end }}
-        {{ end }}
-    {{ end }}
-
-    {{/*
-        Clamp each agenda block to the start of the next one. If entries in
-        content/agenda/ overlap - say a 75 minute "Sessions" block running into a
-        coffee break that starts 60 minutes in - the later entry would otherwise
-        be swallowed by the earlier one's rowspan and vanish from the table.
-        Clamping keeps every entry visible so the clash stays obvious.
-    */}}
-    {{ $clamped := slice }}
-    {{ range $a := $agendaItems }}
-        {{ $end := $a.end }}
-        {{ range $b := $agendaItems }}
-            {{ if and (gt $b.start $a.start) (lt $b.start $end) }}
-                {{ $end = $b.start }}
-            {{ end }}
-        {{ end }}
-        {{ $clamped = $clamped | append (dict "start" $a.start "end" $end "page" $a.page) }}
-    {{ end }}
-    {{ $agendaItems = $clamped }}
-
-    {{ $sessionItems := slice }}
-    {{ range $sessions }}
-        {{ if not .Date.IsZero }}
-            {{ $start := add (mul .Date.Hour 60) .Date.Minute }}
-            {{ $dur := int (.Params.duration | default 0) }}
-            {{ $sessionItems = $sessionItems | append (dict
-                "start" $start "end" (add $start $dur)
-                "room" (.Params.room | default "") "page" .) }}
-        {{ end }}
-    {{ end }}
-
-    {{/*
-        A session cannot still be running once an "allrooms" break takes over
-        every room column - the two would claim the same cells and emit
-        overlapping rowspan/colspan, which browsers render as a mangled table.
-        Clamp each session to the next allrooms break so the grid stays valid
-        even when the schedule in content/ overlaps.
-    */}}
-    {{ $sessionsClamped := slice }}
-    {{ range $s := $sessionItems }}
-        {{ $end := $s.end }}
-        {{ range $a := $agendaItems }}
-            {{ if and $a.page.Params.allrooms (gt $a.start $s.start) (lt $a.start $end) }}
-                {{ $end = $a.start }}
-            {{ end }}
-        {{ end }}
-        {{ $sessionsClamped = $sessionsClamped | append (dict
-            "start" $s.start "end" $end "room" $s.room "page" $s.page) }}
-    {{ end }}
-    {{ $sessionItems = $sessionsClamped }}
-
-    <!-- Collect boundaries: every start, and every end later than its start -->
-    {{ $bounds := slice }}
-    {{ range (append $sessionItems $agendaItems) }}
-        {{ $bounds = $bounds | append .start }}
-        {{ if gt .end .start }}
-            {{ $bounds = $bounds | append .end }}
-        {{ end }}
-    {{ end }}
-    {{ $bounds = $bounds | uniq | sort }}
-
     {{/* Need at least one start and one end to draw a row */}}
     {{ if lt (len $bounds) 2 }}
         <p class="text-muted">The schedule has not been published yet.</p>
     {{ else }}
-    {{ $slots := first (sub (len $bounds) 1) $bounds }}
+    {{ $slots := $schedule.slots }}
     {{ $covered := newScratch }}
 
     <div class="table-responsive">

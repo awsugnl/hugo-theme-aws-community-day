@@ -1,0 +1,105 @@
+{{/*
+    Shared schedule model for the agenda views.
+
+    Returns a dict describing the event as boundaries in minutes past midnight,
+    so the desktop calendar and the mobile timeline stay in step. Both used to
+    carry their own hardcoded 08:00-17:30 ruler of 30 minute ticks; fixing one
+    and not the other silently dropped sessions from the view that was missed.
+
+        agendaItems  - {start, end, page}, clamped to the next entry's start
+        sessionItems - {start, end, room, page}, clamped to the next allrooms break
+        bounds       - sorted, de-duplicated start/end times
+        slots        - bounds without the final one: one entry per renderable row
+
+    Call as: {{ $schedule := partial "schedule-data" . }}
+*/}}
+
+{{ $sessions := where .Site.RegularPages "Section" "sessions" }}
+{{ $breaks := where .Site.Pages "Section" "agenda" }}
+
+{{ $agendaItems := slice }}
+{{ range $breaks }}
+    {{ if .File }}
+        {{ $name := .File.ContentBaseName }}
+        {{ if and (ne $name "_index") (eq (len $name) 4) }}
+            {{/* Trim leading zeros first: Go casts "09" as octal and errors out */}}
+            {{ $hh := int (or (strings.TrimLeft "0" (substr $name 0 2)) "0") }}
+            {{ $mm := int (or (strings.TrimLeft "0" (substr $name 2 2)) "0") }}
+            {{ $start := add (mul $hh 60) $mm }}
+            {{ $dur := int (.Params.duration | default 0) }}
+            {{ $agendaItems = $agendaItems | append (dict
+                "start" $start "end" (add $start $dur) "page" .) }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{/*
+    Clamp each agenda block to the start of the next one. If entries in
+    content/agenda/ overlap - say a 75 minute "Sessions" block running into a
+    coffee break that starts 60 minutes in - the later entry would otherwise be
+    swallowed by the earlier one's rowspan and vanish from the table. Clamping
+    keeps every entry visible so the clash stays obvious.
+*/}}
+{{ $clamped := slice }}
+{{ range $a := $agendaItems }}
+    {{ $end := $a.end }}
+    {{ range $b := $agendaItems }}
+        {{ if and (gt $b.start $a.start) (lt $b.start $end) }}
+            {{ $end = $b.start }}
+        {{ end }}
+    {{ end }}
+    {{ $clamped = $clamped | append (dict "start" $a.start "end" $end "page" $a.page) }}
+{{ end }}
+{{ $agendaItems = $clamped }}
+
+{{ $sessionItems := slice }}
+{{ range $sessions }}
+    {{ if not .Date.IsZero }}
+        {{ $start := add (mul .Date.Hour 60) .Date.Minute }}
+        {{ $dur := int (.Params.duration | default 0) }}
+        {{ $sessionItems = $sessionItems | append (dict
+            "start" $start "end" (add $start $dur)
+            "room" (.Params.room | default "") "page" .) }}
+    {{ end }}
+{{ end }}
+
+{{/*
+    A session cannot still be running once an "allrooms" break takes over every
+    room column - the two would claim the same cells and emit overlapping
+    rowspan/colspan, which browsers render as a mangled table. Clamp each
+    session to the next allrooms break so the grid stays valid even when the
+    schedule in content/ overlaps.
+*/}}
+{{ $sessionsClamped := slice }}
+{{ range $s := $sessionItems }}
+    {{ $end := $s.end }}
+    {{ range $a := $agendaItems }}
+        {{ if and $a.page.Params.allrooms (gt $a.start $s.start) (lt $a.start $end) }}
+            {{ $end = $a.start }}
+        {{ end }}
+    {{ end }}
+    {{ $sessionsClamped = $sessionsClamped | append (dict
+        "start" $s.start "end" $end "room" $s.room "page" $s.page) }}
+{{ end }}
+{{ $sessionItems = $sessionsClamped }}
+
+{{/* Collect boundaries: every start, and every end later than its start */}}
+{{ $bounds := slice }}
+{{ range (append $sessionItems $agendaItems) }}
+    {{ $bounds = $bounds | append .start }}
+    {{ if gt .end .start }}
+        {{ $bounds = $bounds | append .end }}
+    {{ end }}
+{{ end }}
+{{ $bounds = $bounds | uniq | sort }}
+
+{{ $slots := slice }}
+{{ if ge (len $bounds) 2 }}
+    {{ $slots = first (sub (len $bounds) 1) $bounds }}
+{{ end }}
+
+{{ return dict
+    "agendaItems" $agendaItems
+    "sessionItems" $sessionItems
+    "bounds" $bounds
+    "slots" $slots }}
